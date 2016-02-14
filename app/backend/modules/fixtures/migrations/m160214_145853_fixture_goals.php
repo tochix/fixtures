@@ -1,0 +1,26 @@
+<?php
+
+use yii\db\Schema;
+use yii\db\Migration;
+
+class m160214_145853_fixture_goals extends Migration
+{
+    public function safeUp()
+    {
+        $this->createTable('fixture_goals', [
+            'id' => 'int(10) unsigned NOT NULL AUTO_INCREMENT',
+            'fixture_player_id' => 'int(10) unsigned NOT NULL',
+            'scored_at' => 'datetime NOT NULL',
+            'created' => 'datetime DEFAULT NULL',
+            'updated' => 'timestamp ON UPDATE CURRENT_TIMESTAMP',
+            'PRIMARY KEY (id)',
+            'FOREIGN KEY (fixture_player_id) REFERENCES fixture_players (id)'
+        ], 'ENGINE=InnoDB DEFAULT CHARSET=utf8');
+    }
+
+    public function safeDown()
+    {
+        $this->dropTable('fixture_goals');
+    }
+
+}
