@@ -4,6 +4,7 @@ namespace backend\modules\fixtures\components;
 
 use Yii;
 use yii\base\Component;
+use backend;
 
 /**
  * Class for processing fixtures
@@ -24,6 +25,7 @@ class FixtureHandler extends Component
 	{
 		$fixtureParser = new FixtureParser($jsonFeed);
 		$this->fixtureData = $fixtureParser->parse();
+		
 		$this->saveModels();
 	}
 
@@ -80,11 +82,19 @@ class FixtureHandler extends Component
 	 */
 	protected function saveFixture()
 	{
+		if (empty($this->fixtureData['fixture'])) {
+			return;
+		}
+		
 		$fixture = $this->fixtureData['fixture'];
 		$locationId = $this->getRelationValue('city', $fixture['location'], 'Location');
+		$homeTeam = $this->getRelationValue('name', $fixture['home_team'], 'Team');
+		$awayTeam = $this->getRelationValue('name', $fixture['away_team'], 'Team');
 
-		if (!empty($locationId)) {
+		if (!empty($locationId) || empty($homeTeam) || empty($awayTeam)) {
 			unset($fixture['location']);
+			$fixture['home_team'] = $homeTeam;
+			$fixture['away_team'] = $awayTeam;
 			$fixture['location_id'] = $locationId;
 			$this->saveOrUpdate($fixture, 'Fixture');
 		}
@@ -107,7 +117,7 @@ class FixtureHandler extends Component
 
 			foreach ($players as $player) {
 				$playerId = $this->getRelationValue('player_name', $player, 'TeamPlayers');
-				$fixturePlayer = ['player_id' => $playerId, 'team_id' => $teamId, 'fixtureId' => $fixtureId];
+				$fixturePlayer = ['player_id' => $playerId, 'team_id' => $teamId, 'fixture_id' => $fixtureId];
 				$record = $this->saveOrUpdate($fixturePlayer, 'FixturePlayers');
 			}
 		}
@@ -117,7 +127,7 @@ class FixtureHandler extends Component
 	 * Gets fixture's id
 	 * @return int|null
 	 */
-	private getFixtureId()
+	private function getFixtureId()
 	{
 		if (!isset($this->relationKeys['Fixture'][0]['id'])) {
 			return null;
@@ -148,8 +158,8 @@ class FixtureHandler extends Component
 					continue;
 				}
 
-				$params = ['fixture_id' => $fixtureId, 'teamId' => $teamId, 'playerId' => $playerId];
-				$record = FixturePlayers::findOne($params);
+				$params = ['fixture_id' => $fixtureId, 'team_id' => $teamId, 'player_id' => $playerId];
+				$record = backend\modules\fixtures\models\FixturePlayers::findOne($params);
 				if ($record != null) {
 					$data = ['fixture_player_id' => $record->id, 'scored_at' => $goalData['goal_time']];
 					$record = $this->saveOrUpdate($data, 'FixtureGoals');
@@ -161,10 +171,14 @@ class FixtureHandler extends Component
 
 	/**
 	 * Fetches the cached relation's foregin key value
+	 * @return int|null
 	 */
-	protected getRelationValue($recordKey, $recordValue, $model, $relationKey = 'id')
+	protected function getRelationValue($recordKey, $recordValue, $model, $relationKey = 'id')
 	{
 		$relationValue = null;
+		if (empty($this->relationKeys[$model])) {
+			return $relationValue;
+		}
 
 		foreach ((array) $this->relationKeys[$model] as $idx => $modelParams) {
 			foreach ($modelParams as $key => $value) {
@@ -183,21 +197,30 @@ class FixtureHandler extends Component
 	 */
 	protected function saveOrUpdate($params, $model, $primaryKey = 'id')
 	{
-		$record = {$model}::findOne($params);
-
+		$modelNs = 'backend\\modules\\fixtures\\models\\'. $model;
+		if (!class_exists($modelNs)) {
+			exit('Model Class'. $modelNs .' not found.');
+		}
+		
+		$record = $modelNs::findOne($params);
+		
 		if ($record != null && !empty($record->{$primaryKey})) {
 		
 		} else {
-			$modelInstance = new $model();
+			$modelInstance = new $modelNs();
 			$modelInstance->created = date('Y-m-d H:i:s');
-
+			echo "git here";
 			foreach ($params as $key => $value) {
 				$modelInstance->{$key} = $value;
 			}
 
 			if ($modelInstance->save()) {
 				$record = $modelInstance;
+			} else {
+				Yii::trace('Failed to save model. '. print_r($modelInstance->errors, true));
+				return;
 			}
+			
 		}
 
 		$params[$primaryKey] = $record->{$primaryKey};

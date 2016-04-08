@@ -78,9 +78,16 @@ use yii\base\Component;
 
 class FixtureParser extends Component
 {
-	public $jsonFeed = null;
 	private $feedData = [];
-	private $normalizedData = [];
+	//private $normalizedData = [];
+	private $normalizedData = [
+		'teams' => [],
+		'team_players' => [],
+		'location' => '',
+		'fixture' => [],
+		'fixture_goals' => [],
+		'fixture_fouls' => [],
+	];
 
 	/**
 	 * Constructor initializes the json feed.
@@ -88,7 +95,11 @@ class FixtureParser extends Component
 	 */
 	function __construct($jsonFeed)
 	{
-		$this->jsonFeed = $jsonFeed;
+		try {
+			$this->feedData = json_decode($jsonFeed, true);
+		} catch (\Exception $error) {
+			exit($error->getMessage());
+		}
 	}
 
 	/**
@@ -106,7 +117,6 @@ class FixtureParser extends Component
 	 */
 	protected function getNormalizedData()
 	{
-		$this->feedData = json_decode($this->jsonFeed, true);
 		if (!is_array($this->feedData) || empty($this->feedData)) {
 			return $this->normalizedData;
 		}
@@ -120,9 +130,9 @@ class FixtureParser extends Component
 			'fixture_fouls' => $this->getFixtureEvents('fouls'),
 		];
 
-		return $normalizedData;
+		return $this->normalizedData;
 	}
-
+	
 	/**
 	 * Get the teams in the feed.
 	 * @return array
@@ -144,7 +154,7 @@ class FixtureParser extends Component
 	protected function getTeamPlayers()
 	{
 		$teamPlayers = [];
-		if (($teams = $this->getFixtureTeams()) == null) {
+		if (($teams = $this->getFixtureTeams()) == null || empty($this->feedData['players'])) {
 			return $teamPlayers;
 		} 
 
@@ -179,7 +189,7 @@ class FixtureParser extends Component
 	 * Gets the fixture's location
 	 * @return string
 	 */
-	protected getLocation()
+	protected function getLocation()
 	{
 		$location = (!empty($this->feedData['location'])) ? $this->feedData['location'] : null;
 		return $location;
@@ -189,7 +199,7 @@ class FixtureParser extends Component
 	 * Gets fixture's data
 	 * @return array
 	 */
-	protected getFixture()
+	protected function getFixture()
 	{
 		$fixture = [
 			'home_team' => $this->getTeamSide('home'),
