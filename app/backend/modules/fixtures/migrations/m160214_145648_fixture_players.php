@@ -1,6 +1,5 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
 class m160214_145648_fixture_players extends Migration
@@ -16,7 +15,7 @@ class m160214_145648_fixture_players extends Migration
             'updated' => 'timestamp ON UPDATE CURRENT_TIMESTAMP',
             'PRIMARY KEY (id)',
             'FOREIGN KEY (team_id) REFERENCES team (id)',
-            'FOREIGN KEY (fixture_id) REFERENCES fixture (id)'
+            'FOREIGN KEY (fixture_id) REFERENCES fixture (id)',
         ], 'ENGINE=InnoDB DEFAULT CHARSET=utf8');
     }
 
@@ -24,5 +23,4 @@ class m160214_145648_fixture_players extends Migration
     {
         $this->dropTable('fixture_players');
     }
-
 }

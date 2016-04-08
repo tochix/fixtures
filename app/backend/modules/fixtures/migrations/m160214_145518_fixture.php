@@ -1,6 +1,5 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
 class m160214_145518_fixture extends Migration
@@ -27,6 +26,4 @@ class m160214_145518_fixture extends Migration
     {
         $this->dropTable('fixture');
     }
-
 }
-

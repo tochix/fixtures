@@ -7,15 +7,14 @@ use Yii;
 /**
  * This is the model class for table "fixture".
  *
- * @property integer $id
- * @property integer $home_team
- * @property integer $away_team
- * @property integer $location_id
+ * @property int $id
+ * @property int $home_team
+ * @property int $away_team
+ * @property int $location_id
  * @property string $fixture_date
  * @property string $result
  * @property string $created
  * @property string $updated
- *
  * @property Team $homeTeam
  * @property Team $awayTeam
  * @property Location $location
@@ -24,7 +23,7 @@ use Yii;
 class Fixture extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -32,7 +31,7 @@ class Fixture extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
@@ -40,12 +39,12 @@ class Fixture extends \yii\db\ActiveRecord
             [['home_team', 'away_team', 'location_id', 'fixture_date', 'result'], 'required'],
             [['home_team', 'away_team', 'location_id'], 'integer'],
             [['fixture_date', 'created', 'updated'], 'safe'],
-            [['result'], 'string', 'max' => 255]
+            [['result'], 'string', 'max' => 255],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

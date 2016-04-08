@@ -7,11 +7,10 @@ use Yii;
 /**
  * This is the model class for table "team".
  *
- * @property integer $id
+ * @property int $id
  * @property string $name
  * @property string $created
  * @property string $updated
- *
  * @property Fixture[] $fixtures
  * @property Fixture[] $fixtures0
  * @property FixturePlayers[] $fixturePlayers
@@ -20,7 +19,7 @@ use Yii;
 class Team extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -28,19 +27,19 @@ class Team extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['name'], 'required'],
             [['created', 'updated'], 'safe'],
-            [['name'], 'string', 'max' => 255]
+            [['name'], 'string', 'max' => 255],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

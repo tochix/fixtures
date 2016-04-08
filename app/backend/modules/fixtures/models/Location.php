@@ -7,17 +7,16 @@ use Yii;
 /**
  * This is the model class for table "location".
  *
- * @property integer $id
+ * @property int $id
  * @property string $city
  * @property string $created
  * @property string $updated
- *
  * @property Fixture[] $fixtures
  */
 class Location extends \yii\db\ActiveRecord
 {
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function tableName()
     {
@@ -25,19 +24,19 @@ class Location extends \yii\db\ActiveRecord
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function rules()
     {
         return [
             [['city'], 'required'],
             [['created', 'updated'], 'safe'],
-            [['city'], 'string', 'max' => 255]
+            [['city'], 'string', 'max' => 255],
         ];
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function attributeLabels()
     {

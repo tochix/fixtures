@@ -1,6 +1,5 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
 class m160214_145513_location extends Migration
@@ -12,7 +11,7 @@ class m160214_145513_location extends Migration
             'city' => 'varchar(255) NOT NULL',
             'created' => 'datetime DEFAULT NULL',
             'updated' => 'timestamp ON UPDATE CURRENT_TIMESTAMP',
-            'PRIMARY KEY (id)'
+            'PRIMARY KEY (id)',
         ], 'ENGINE=InnoDB DEFAULT CHARSET=utf8');
     }
 
@@ -20,5 +19,4 @@ class m160214_145513_location extends Migration
     {
         $this->dropTable('location');
     }
-
 }

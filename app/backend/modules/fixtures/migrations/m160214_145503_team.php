@@ -1,6 +1,5 @@
 <?php
 
-use yii\db\Schema;
 use yii\db\Migration;
 
 class m160214_145503_team extends Migration
@@ -12,7 +11,7 @@ class m160214_145503_team extends Migration
             'name' => 'varchar(255) NOT NULL',
             'created' => 'datetime DEFAULT NULL',
             'updated' => 'timestamp ON UPDATE CURRENT_TIMESTAMP',
-            'PRIMARY KEY (id)'
+            'PRIMARY KEY (id)',
         ], 'ENGINE=InnoDB DEFAULT CHARSET=utf8');
     }
 
